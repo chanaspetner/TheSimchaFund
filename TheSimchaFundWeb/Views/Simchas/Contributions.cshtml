@@ -1,0 +1,63 @@
+﻿@using TheSimchaFundData
+@model ContributionsViewModel
+
+<div class="container">
+    <main role="main" class="pb-3" style="margin-top: 60px;">
+        <div class="header">
+            <h1>Contributors for the @Model.Simcha.Name simcha</h1>
+        </div>
+        <div class="table-responsive">
+            <form method="POST" action="/simchas/updatecontributions">
+                <input type="hidden" name="simchaId" value="@Model.Simcha.Id" />
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>Contribute</th>
+                        <th>Name</th>
+                        <th>Balance</th>
+                        <th>Always Include</th>
+                        <th>Amount</th>
+                    </tr>
+                    @for (int i = 0; i < Model.People.Count(); i++)
+                    {
+                        <input type="hidden" name="people[@i].Id" value="@Model.People[i].Id" />
+                        <tr>
+                            <td>
+                                @if (Model.People[i].Include)
+                                {
+                                    <input class="contribute" type="checkbox" checked="checked" name="people[@i].Include" value="true" />
+                                }
+                                else
+                                {
+                                    <input class="contribute" type="checkbox" name="people[@i].Include" value="true" />
+                                }
+
+                            </td>
+                            <td>@Model.People[i].FirstName @Model.People[i].LastName</td>
+                            <td>@Model.People[i].Balance</td>
+                            <td style="text-align: center;"><i class="@(Model.People[i].AlwaysInclude  ? "bi bi-check":"" )"></i></td>
+                            <td>
+                                @if (Model.People[i].Include)
+                                {
+                                    foreach (Contribution c in Model.Contributions)
+                                    {
+                                        if (c.PersonId == Model.People[i].Id)
+                                        {
+                                            <input type="text" name="people[@i].Amount" class="form-control" value="@c.Amount" />
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <input type="text" name="people[@i].Amount" class="form-control" value="5" />
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <div style="text-align:center;">
+                    <button class="btn-lg btn-danger">Update</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
